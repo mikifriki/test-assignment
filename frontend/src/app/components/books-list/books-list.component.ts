@@ -16,7 +16,7 @@ import {MatSort} from "@angular/material/sort";
 export class BooksListComponent implements OnInit {
 	books$: Observable<Page<Book>>;
 
-	displayedColumns: string[] = ['title', 'author'];
+	displayedColumns: string[] = ['title', 'author', 'genre', 'status', 'year'];
 
 	currentBooks: Page<Book>;
 	dataSource: MatTableDataSource<Book>;
@@ -71,6 +71,7 @@ export class BooksListComponent implements OnInit {
 		);
 	}
 
+	//Got this idea from looking at Angular documentation, and finding that mat-paginator has event emitters.
 	handlePage(event: any) {
 		if (this.dataSource.data.length == this.currentBooks.totalElements) return;
 		if (event.previousPageIndex < event.pageIndex || event.pageSize === event.length) {
