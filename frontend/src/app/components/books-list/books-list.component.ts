@@ -15,10 +15,13 @@ import {MatSort} from "@angular/material/sort";
 
 export class BooksListComponent implements OnInit {
 	books$: Observable<Page<Book>>;
-	currentBooks: Page<Book>;
+
 	displayedColumns: string[] = ['title', 'author'];
+
+	currentBooks: Page<Book>;
 	dataSource: MatTableDataSource<Book>;
 	isDisabled: boolean;
+	currentPage: number;
 
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
@@ -34,7 +37,8 @@ export class BooksListComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.isDisabled = false;
-		this.books$ = this.bookService.getBooks({pageIndex: 1});
+		this.currentPage = 0;
+		this.books$ = this.bookService.getBooks({pageIndex: this.currentPage, pageSize: 50});
 		this.books$.subscribe(
 			books => {
 				this.currentBooks = books;
@@ -44,6 +48,7 @@ export class BooksListComponent implements OnInit {
 			},
 			err => console.log('HTTP Error', err)
 		);
+
 	}
 
 	filterInput(event: Event) {
@@ -59,9 +64,25 @@ export class BooksListComponent implements OnInit {
 			countries => {
 				this.dataSource = new MatTableDataSource(countries.content);
 				this.dataSource.paginator = this.paginator;
+				this.dataSource.sort = this.sort;
 				this.isDisabled = true;
 			},
 			err => console.log('HTTP Error', err)
 		);
+	}
+
+	handlePage(event: any) {
+		if (this.dataSource.data.length == this.currentBooks.totalElements) return;
+		if (event.previousPageIndex < event.pageIndex || event.pageSize === event.length) {
+			this.currentPage++;
+			this.bookService.getBooks({pageIndex: this.currentPage, pageSize: 50}).subscribe(
+				countries => {
+					this.dataSource.data.push(...countries.content);
+					this.dataSource.paginator = this.paginator;
+				},
+				err => console.log('HTTP Error', err)
+			);
+		} else {
+		}
 	}
 }
