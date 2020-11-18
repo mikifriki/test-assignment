@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {BookService} from '../../services/book.service';
+import {CheckoutsService} from '../../services/checkouts.service';
 import {Observable} from 'rxjs';
 import {Page} from '../../models/page';
 import {Book} from '../../models/book';
@@ -8,17 +8,17 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 
 @Component({
-	selector: 'app-books-list',
-	templateUrl: './books-list.component.html',
-	styleUrls: ['./books-list.component.scss']
+	selector: 'app-checkouts-list',
+	templateUrl: './checkouts-table.component.html',
+	styleUrls: ['./checkouts-table.component.scss']
 })
 
-export class BooksListComponent implements OnInit {
+export class CheckoutsTableComponent implements OnInit {
 	books$: Observable<Page<Book>>;
 
-	displayedColumns: string[] = ['title', 'author', 'genre', 'status', 'year'];
+	displayedColumns: string[] = ['title', 'genre', 'dueDate', 'author', 'status'];
 
-	currentBooks: Page<Book>;
+	checkedBooks: Page<Book>;
 	dataSource: MatTableDataSource<Book>;
 	isDisabled: boolean;
 	currentPage: number;
@@ -26,27 +26,23 @@ export class BooksListComponent implements OnInit {
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
 
-	log(val) {
-		console.log(val);
-	}
-
-	constructor(private bookService: BookService) {
+	constructor(private checkoutsService: CheckoutsService) {
 	}
 
 	ngOnInit(): void {
 		this.isDisabled = false;
 		this.currentPage = 0;
-		this.books$ = this.bookService.getBooks({pageIndex: this.currentPage, pageSize: 50});
-		this.books$.subscribe(
+		this.books$ = this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50});
+		this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50}).subscribe(
 			books => {
-				this.currentBooks = books;
+				this.checkedBooks = books;
 				this.dataSource = new MatTableDataSource(books.content);
 				this.dataSource.paginator = this.paginator;
 				this.dataSource.sort = this.sort;
 			},
 			err => console.log('HTTP Error', err)
 		);
-
+		console.log(this.books$);
 	}
 
 	filterInput(event: Event) {
@@ -58,7 +54,7 @@ export class BooksListComponent implements OnInit {
 	}
 
 	onClick() {
-		this.bookService.getBooks({pageSize: this.currentBooks.totalElements}).subscribe(
+		this.checkoutsService.getCheckouts({pageSize: this.checkedBooks.totalElements}).subscribe(
 			countries => {
 				this.dataSource = new MatTableDataSource(countries.content);
 				this.dataSource.paginator = this.paginator;
@@ -71,10 +67,10 @@ export class BooksListComponent implements OnInit {
 
 	//Got this idea from looking at Angular documentation, and finding that mat-paginator has event emitters.
 	handlePage(event: any) {
-		if (this.dataSource.data.length == this.currentBooks.totalElements) return;
+		if (this.dataSource.data.length == this.checkedBooks.totalElements) return;
 		if (event.previousPageIndex < event.pageIndex || event.pageSize === event.length) {
 			this.currentPage++;
-			this.bookService.getBooks({pageIndex: this.currentPage, pageSize: 50}).subscribe(
+			this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50}).subscribe(
 				countries => {
 					this.dataSource.data.push(...countries.content);
 					this.dataSource.paginator = this.paginator;
