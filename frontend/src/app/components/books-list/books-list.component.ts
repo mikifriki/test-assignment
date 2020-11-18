@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {BookService} from '../../services/book.service';
+import {CheckoutsService} from '../../services/checkouts.service';
 import {Observable} from 'rxjs';
 import {Page} from '../../models/page';
 import {Book} from '../../models/book';
@@ -30,15 +31,14 @@ export class BooksListComponent implements OnInit {
 		console.log(val);
 	}
 
-	constructor(
-		private bookService: BookService,
-	) {
+	constructor(private bookService: BookService, private checkoutsService: CheckoutsService) {
 	}
 
 	ngOnInit(): void {
 		this.isDisabled = false;
 		this.currentPage = 0;
 		this.books$ = this.bookService.getBooks({pageIndex: this.currentPage, pageSize: 50});
+		this.checkoutsService.getCheckouts({}).subscribe(checkout => console.log(checkout));
 		this.books$.subscribe(
 			books => {
 				this.currentBooks = books;
