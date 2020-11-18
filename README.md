@@ -54,7 +54,7 @@ If you have any questions, please reach out without hesitation. Best of luck!
 
 ##Development tasks
 
-* Using backend api endpoint /getBooks, implement table of books view
+* Using backend api endpoint /getBooks, implement table of books view done
 * Using backend api endpoint /getCheckouts, also implement the checkouts view. Suppport paging and sorting for both views
 * Implement individual book and checkout view, support basic CRUD operations, implement checking out and returning books
 * Implement searching for books using freetext criteria

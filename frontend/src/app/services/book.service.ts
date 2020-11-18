@@ -18,7 +18,7 @@ export class BookService {
   ) {
   }
 
-  getBooks(filter: Partial<PageRequest>): Observable<Page<Book> | Error> {
+  getBooks(filter: Partial<PageRequest>): Observable<Page<Book>> {
     const url = this.baseUrl + '/getBooks';
     const params = RestUtil.buildParamsFromPageRequest(filter);
     return this.http.get<Page<Book>>(url, {params});
