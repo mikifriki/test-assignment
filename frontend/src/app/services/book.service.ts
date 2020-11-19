@@ -14,21 +14,21 @@ export class BookService {
   private readonly baseUrl = environment.backendUrl + '/api/book';
 
   constructor(
-    private http: HttpClient,
+	  private http: HttpClient,
   ) {
   }
 
-  getBooks(filter: Partial<PageRequest>): Observable<Page<Book>> {
-    const url = this.baseUrl + '/getBooks';
-    const params = RestUtil.buildParamsFromPageRequest(filter);
-    return this.http.get<Page<Book>>(url, {params});
-  }
+	getBooks(filter: Partial<PageRequest>): Observable<Page<Book>> {
+		const url = this.baseUrl + '/getBooks';
+		const params = RestUtil.buildParamsFromPageRequest(filter);
+		return this.http.get<Page<Book>>(url, {params});
+	}
 
-  getBook(bookId: string): Observable<Book | Error> {
-	  const url = this.baseUrl + '/getBook';
-	  const params = new HttpParams().set('bookId', bookId);
-	  return this.http.get<Book>(url, {params});
-  }
+	getBook(bookId: string): Observable<Book | Error> {
+		const url = this.baseUrl + '/getBook';
+		const params = new HttpParams().set('bookId', bookId);
+		return this.http.get<Book>(url, {params});
+	}
 
 	saveBook(book: Book): Observable<void | Error> {
 		const url = this.baseUrl + '/saveBook';

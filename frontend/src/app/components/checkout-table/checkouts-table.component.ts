@@ -15,9 +15,7 @@ import {MatSort} from "@angular/material/sort";
 
 export class CheckoutsTableComponent implements OnInit {
 	books$: Observable<Page<Book>>;
-
 	displayedColumns: string[] = ['title', 'genre', 'dueDate', 'author', 'status'];
-
 	checkedBooks: Page<Book>;
 	dataSource: MatTableDataSource<Book>;
 	isDisabled: boolean;
