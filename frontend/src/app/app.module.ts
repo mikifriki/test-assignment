@@ -10,6 +10,7 @@ import {BookDetailComponent} from './components/book-detail/book-detail.componen
 import {CheckoutsTableComponent} from './components/checkout-table/checkouts-table.component';
 import {ParentTableContainer} from './components/table-container/parent-table-container';
 import {HttpClientModule} from '@angular/common/http';
+import {FavoriteBookDisplay} from "./components/favorite-books/favorite-book.display";
 
 @NgModule({
 	declarations: [
@@ -17,7 +18,8 @@ import {HttpClientModule} from '@angular/common/http';
 		BooksListComponent,
 		BookDetailComponent,
 		CheckoutsTableComponent,
-		ParentTableContainer
+		ParentTableContainer,
+		FavoriteBookDisplay
 	],
 	imports: [
 		BrowserModule,
