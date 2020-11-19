@@ -14,25 +14,12 @@ import {MatSort} from "@angular/material/sort";
 	styleUrls: ['./parent-table-container.scss']
 })
 
+
 export class ParentTableContainer implements OnInit {
-	books$: Observable<Page<Book>>;
-	currentBooks: Page<Book>;
-	dataSource: MatTableDataSource<Book>;
-	isDisabled: boolean;
-	currentPage: number;
 
-	@ViewChild(MatPaginator) paginator: MatPaginator;
-	@ViewChild(MatSort) sort: MatSort;
-
-	log(val) {
-		console.log(val);
-	}
-
-	constructor(private checkoutsService: CheckoutsService) {
+	constructor() {
 	}
 
 	ngOnInit(): void {
-
 	}
-
 }
