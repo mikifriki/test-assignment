@@ -1,11 +1,13 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {BookService} from '../../services/book.service';
+import {FavoritesService} from '../../services/favorites.service';
 import {Observable} from 'rxjs';
 import {Page} from '../../models/page';
 import {Book} from '../../models/book';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
+import {SelectionModel} from "@angular/cdk/collections";
 
 @Component({
 	selector: 'app-books-list',
@@ -15,22 +17,21 @@ import {MatSort} from "@angular/material/sort";
 
 export class BooksListComponent implements OnInit {
 	books$: Observable<Page<Book>>;
-
-	displayedColumns: string[] = ['title', 'author', 'genre', 'status', 'year'];
-
+	displayedColumns: string[] = ['select', 'title', 'author', 'genre', 'status', 'year'];
 	currentBooks: Page<Book>;
 	dataSource: MatTableDataSource<Book>;
 	isDisabled: boolean;
 	currentPage: number;
 
+	checkedData = [];
+	selection = new SelectionModel<Book>(true, []);
+	checkedDataSource = new MatTableDataSource<Book>(this.checkedData);
+	checkedSelection = new SelectionModel<Book>(true, []);
+
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
 
-	log(val) {
-		console.log(val);
-	}
-
-	constructor(private bookService: BookService) {
+	constructor(private bookService: BookService, private favoritesService: FavoritesService) {
 	}
 
 	ngOnInit(): void {
@@ -46,7 +47,6 @@ export class BooksListComponent implements OnInit {
 			},
 			err => console.log('HTTP Error', err)
 		);
-
 	}
 
 	filterInput(event: Event) {
@@ -83,5 +83,40 @@ export class BooksListComponent implements OnInit {
 			);
 		} else {
 		}
+	}
+
+	// Is gotten from Angulars own Table select website
+	isAllSelected() {
+		const numSelected = this.selection.selected.length;
+		const numRows = this.dataSource.data.length;
+		return numSelected === numRows;
+	}
+
+	/** Selects all rows if they are not all selected; otherwise clear selection. */
+	masterToggle() {
+		this.isAllSelected() ?
+			this.selection.clear() :
+			this.dataSource.data.forEach(row => this.selection.select(row));
+	}
+
+	//Till here
+	removeSelectedRows() {
+		this.selection.selected.forEach(book => {
+			let elementPos = this.dataSource.data.map((x) => {
+				return x.id;
+			}).indexOf(book.id);
+			this.bookService.deleteBook(book.id).subscribe(data => {
+					this.dataSource.data.splice(elementPos, 1);
+					this.dataSource.paginator = this.paginator
+				},
+				error => error);
+		})
+	}
+
+	addToFavorites() {
+		this.selection.selected.forEach(book => {
+			this.favoritesService.sendUpdate(`${book.id}`);
+			this.favoritesService.addStorage(book);
+		})
 	}
 }
