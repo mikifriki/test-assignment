@@ -25,20 +25,19 @@ export class BookService {
   }
 
   getBook(bookId: string): Observable<Book | Error> {
-    const url = this.baseUrl + '/getBook';
-    const params = new HttpParams().set('bookId', bookId);
-    return this.http.get<Book>(url, {params});
+	  const url = this.baseUrl + '/getBook';
+	  const params = new HttpParams().set('bookId', bookId);
+	  return this.http.get<Book>(url, {params});
   }
 
-  saveBook(book: Book): Observable<void | Error> {
-    const url = this.baseUrl + '/saveBook';
-    return this.http.post<void>(url, book);
-  }
+	saveBook(book: Book): Observable<void | Error> {
+		const url = this.baseUrl + '/saveBook';
+		return this.http.post<void>(url, book);
+	}
 
-  deleteBook(bookId: string): Observable<void | Error> {
-    const url = this.baseUrl + '/deleteBook';
-    const params = new HttpParams().set('bookId', bookId);
-    return this.http.delete<void>(url, {params});
-  }
-
+	deleteBook(bookId): Observable<void | Error> {
+		const url = this.baseUrl + '/deleteBook';
+		const params = new HttpParams().set('bookId', bookId);
+		return this.http.delete<void>(url, {params});
+	}
 }
