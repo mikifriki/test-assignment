@@ -6,6 +6,7 @@ import {Book} from '../../models/book';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
+import {PageService} from "../../services/page.service";
 
 @Component({
 	selector: 'app-checkouts-list',
@@ -24,7 +25,7 @@ export class CheckoutsTableComponent implements OnInit {
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
 
-	constructor(private checkoutsService: CheckoutsService) {
+	constructor(private checkoutsService: CheckoutsService, private  pageService: PageService) {
 	}
 
 	ngOnInit(): void {
@@ -34,13 +35,13 @@ export class CheckoutsTableComponent implements OnInit {
 		this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50}).subscribe(
 			books => {
 				this.checkedBooks = books;
+				console.log(books.content);
 				this.dataSource = new MatTableDataSource(books.content);
 				this.dataSource.paginator = this.paginator;
 				this.dataSource.sort = this.sort;
 			},
 			err => console.log('HTTP Error', err)
 		);
-		console.log(this.books$);
 	}
 
 	filterInput(event: Event) {
@@ -61,21 +62,17 @@ export class CheckoutsTableComponent implements OnInit {
 			},
 			err => console.log('HTTP Error', err)
 		);
+
+
 	}
 
-	//Got this idea from looking at Angular documentation, and finding that mat-paginator has event emitters.
+	//Moved this into its own service so there would'nt be repeating code
 	handlePage(event: any) {
-		if (this.dataSource.data.length == this.checkedBooks.totalElements) return;
-		if (event.previousPageIndex < event.pageIndex || event.pageSize === event.length) {
-			this.currentPage++;
-			this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50}).subscribe(
-				countries => {
-					this.dataSource.data.push(...countries.content);
-					this.dataSource.paginator = this.paginator;
-				},
-				err => console.log('HTTP Error', err)
-			);
-		} else {
-		}
+		this.pageService.handlePage(
+			this.dataSource, event,
+			this.checkedBooks, this.currentPage,
+			this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50}),
+			this.paginator
+		)
 	}
 }
