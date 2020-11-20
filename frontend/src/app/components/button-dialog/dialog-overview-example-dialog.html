@@ -1,0 +1,11 @@
+<div mat-dialog-content>
+	<p>Are you sure you want to {{data.calledEvent}}</p>
+	<mat-form-field *ngIf="data.calledEvent == 'delete'">
+		<p>a</p>
+	</mat-form-field>
+</div>
+<div mat-dialog-actions>
+	<button mat-button (click)="onNoClick()">No Thanks</button>
+	<button mat-button (click)="confimClick()" cdkFocusInitial>Yes</button>
+</div>
+
