@@ -1,7 +1,5 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {FavoritesService} from '../../services/favorites.service';
-import {Subscription} from 'rxjs';
-
 @Component({
 	selector: 'app-favorites-display',
 	templateUrl: './favorite-book.display.html',
@@ -14,6 +12,7 @@ export class FavoriteBookDisplay implements OnInit {
 	constructor(private favoriteService: FavoritesService) {
 		this.favoriteService.updateStorageObs.subscribe((response) => {
 			if (response) {
+				this.favoriteService.allStorage();
 				this.ngOnInit();
 			}
 

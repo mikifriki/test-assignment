@@ -4,7 +4,7 @@
 		<mat-list>
 			<mat-list-item *ngFor="let item of favoriteItems">
 				{{item[0]}} by {{item[1]}}
-				<button mat-button (click)="removeItem(item[0])">Remove Book</button>
+				<button mat-flat-button color="warn" mat-button (click)="removeItem(item[0])">Remove Book</button>
 			</mat-list-item>
 		</mat-list>
 	</mat-card>
