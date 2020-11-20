@@ -12,4 +12,5 @@ export interface Book {
   status: BookStatus;
   dueDate: string;
   comment: string;
+  borrowedBook?: Book
 }

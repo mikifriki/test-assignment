@@ -1,11 +1,11 @@
 import {Book} from "./book";
 
-export interface CheckedBook {
+export interface CheckedBook<Book> {
 	id: string,
-	borrowerFirstName?: null,
-	borrowerLastName?: null,
+	borrowerFirstName?: string,
+	borrowerLastName?: string,
 	borrowedBook: Book,
-	checkedOutDate?: null,
-	dueDate?: null,
-	returnedDate?: null,
+	checkedOutDate?: string,
+	dueDate?: string,
+	returnedDate?: string,
 }
