@@ -27,10 +27,10 @@ export class CheckoutsService {
 		return this.http.get<Book>(url, {params});
 	}
 
-	//ToDo: add checkout as a api call for saving and deleting
-	checkout(book: Book): Observable<void | Error> {
-		const url = this.baseUrl + '/saveBook';
-		return this.http.post<void>(url, book);
+	//Done
+	checkout(string): Observable<void | Error> {
+		const url = this.baseUrl + '/checkout';
+		return this.http.post<void>(url, string);
 	}
 
 	deleteBook(bookId: string): Observable<void | Error> {
