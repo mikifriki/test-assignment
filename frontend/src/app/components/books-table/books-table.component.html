@@ -9,17 +9,17 @@
 		<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 			<!-- Checkbox Column -->
 			<ng-container matColumnDef="select">
-				<mat-header-cell *matHeaderCellDef>
+				<th mat-header-cell *matHeaderCellDef>
 					<mat-checkbox (change)="$event ? masterToggle() : null"
 								  [checked]="selection.hasValue() && isAllSelected()"
 								  [indeterminate]="selection.hasValue() && !isAllSelected()">
 					</mat-checkbox>
-				</mat-header-cell>
-				<mat-cell *matCellDef="let row">
+				</th>
+				<td mat-cell *matCellDef="let row">
 					<mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
 								  [checked]="selection.isSelected(row)">
 					</mat-checkbox>
-				</mat-cell>
+				</td>
 			</ng-container>
 
 			<ng-container matColumnDef="title">
@@ -54,7 +54,8 @@
 		<button mat-raised-button color="primary" (click)="removeSelectedRows()">
 			Delete Book
 		</button>
-		<button mat-raised-button (click)="addToFavorites()">Pick one</button>
+		<button mat-raised-button (click)="addToFavorites()">Add to favorites</button>
+		<button mat-raised-button (click)="Checkout()">Checkout</button>
 		<mat-paginator [pageSizeOptions]="[5, 10, 25, 50]" (page)="handlePage($event)"></mat-paginator>
 	</mat-card>
 </div>

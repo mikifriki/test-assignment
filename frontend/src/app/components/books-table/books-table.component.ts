@@ -8,35 +8,46 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {SelectionModel} from "@angular/cdk/collections";
+import {CheckoutsService} from "../../services/checkouts.service";
+import {CheckedBook} from "../../models/checked-book";
+import {v4 as uuidv4} from 'uuid';
+import {PageService} from "../../services/page.service";
+import {DialogOverviewExampleDialog} from "../button-dialog/dialog-overview-example-dialog";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
 	selector: 'app-books-list',
-	templateUrl: './books-list.component.html',
-	styleUrls: ['./books-list.component.scss']
+	templateUrl: './books-table.component.html',
+	styleUrls: ['./books-table.component.scss']
 })
 
-export class BooksListComponent implements OnInit {
+export class BooksTableComponent implements OnInit {
 	books$: Observable<Page<Book>>;
 	displayedColumns: string[] = ['select', 'title', 'author', 'genre', 'status', 'year'];
 	currentBooks: Page<Book>;
 	dataSource: MatTableDataSource<Book>;
 	isDisabled: boolean;
 	currentPage: number;
-
-	checkedData = [];
 	selection = new SelectionModel<Book>(true, []);
-	checkedDataSource = new MatTableDataSource<Book>(this.checkedData);
-	checkedSelection = new SelectionModel<Book>(true, []);
-
+	checkedBook: CheckedBook;
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
 
-	constructor(private bookService: BookService, private favoritesService: FavoritesService) {
+	animal: string;
+	event: string;
+
+
+	constructor(public dialog: MatDialog,
+				private pageService: PageService,
+				private checkoutsService: CheckoutsService,
+				private bookService: BookService,
+				private favoritesService: FavoritesService) {
 	}
 
 	ngOnInit(): void {
 		this.isDisabled = false;
 		this.currentPage = 0;
+		this.checkedBook = <CheckedBook>{};
 		this.books$ = this.bookService.getBooks({pageIndex: this.currentPage, pageSize: 50});
 		this.books$.subscribe(
 			books => {
@@ -69,23 +80,36 @@ export class BooksListComponent implements OnInit {
 		);
 	}
 
-	//Got this idea from looking at Angular documentation, and finding that mat-paginator has event emitters.
-	handlePage(event: any) {
-		if (this.dataSource.data.length == this.currentBooks.totalElements) return;
-		if (event.previousPageIndex < event.pageIndex || event.pageSize === event.length) {
-			this.currentPage++;
-			this.bookService.getBooks({pageIndex: this.currentPage, pageSize: 50}).subscribe(
-				countries => {
-					this.dataSource.data.push(...countries.content);
-					this.dataSource.paginator = this.paginator;
-				},
-				err => console.log('HTTP Error', err)
-			);
-		} else {
-		}
+	Checkout() {
+		this.event = "Checkout these books";
+		this.openDialog();
+		this.favoritesService.updateStorageObs.subscribe((response) => {
+			if (response) {
+				this.selection.selected.forEach(book => {
+					if (book.status == "AVAILABLE") {
+						book.status = "BORROWED";
+						book.checkOutCount++;
+						this.checkedBook.id = uuidv4();
+						this.checkedBook.borrowedBook = book;
+						this.checkoutsService.checkout(this.checkedBook).subscribe();
+						this.bookService.saveBook(book).subscribe();
+					}
+				});
+			}
+		});
 	}
 
-	// Is gotten from Angulars own Table select website
+	//Moved this into its own service so there would'nt be repeating code
+	handlePage(event: any) {
+		this.pageService.handlePage(
+			this.dataSource, event,
+			this.currentBooks, this.currentPage,
+			this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50}),
+			this.paginator
+		);
+	}
+
+	// Is gotten from Angular's own Table select website
 	isAllSelected() {
 		const numSelected = this.selection.selected.length;
 		const numRows = this.dataSource.data.length;
@@ -100,17 +124,20 @@ export class BooksListComponent implements OnInit {
 	}
 
 	//Till here
-	removeSelectedRows() {
-		this.selection.selected.forEach(book => {
-			let elementPos = this.dataSource.data.map((x) => {
-				return x.id;
-			}).indexOf(book.id);
-			this.bookService.deleteBook(book.id).subscribe(data => {
-					this.dataSource.data.splice(elementPos, 1);
-					this.dataSource.paginator = this.paginator
-				},
-				error => error);
+	removeSelectedRows(): void {
+		this.event = "Delete";
+		this.openDialog();
+		this.favoritesService.updateStorageObs.subscribe((response) => {
+			if (response) {
+				this.pageService.removeSelected(
+					this.selection.selected, this.dataSource,
+					this.bookService, this.paginator
+				);
+				this.selection.clear();
+			}
 		})
+
+
 	}
 
 	addToFavorites() {
@@ -118,5 +145,12 @@ export class BooksListComponent implements OnInit {
 			this.favoritesService.sendUpdate(`${book.id}`);
 			this.favoritesService.addStorage(book);
 		})
+	}
+
+	openDialog(): void {
+		this.dialog.open(DialogOverviewExampleDialog, {
+			width: '250px',
+			data: {calledEvent: this.event, animal: this.animal}
+		});
 	}
 }
