@@ -1,11 +1,22 @@
 <div mat-dialog-content>
-	<p>Are you sure you want to {{data.calledEvent}}</p>
-	<mat-form-field *ngIf="data.calledEvent == 'delete'">
-		<p>a</p>
-	</mat-form-field>
+	<h1 mat-dialog-title>{{data.calledEvent}}</h1>
+	<p>Are you sure you want to {{data.calledEvent}}?</p>
+	<div *ngIf="data.calledEvent == 'Checkout'" mat-dialog-content>
+		<p>Please enter your name and lastname</p>
+		<mat-form-field>
+			<mat-label>Firstname</mat-label>
+			<input matInput [(ngModel)]="data.firstName">
+		</mat-form-field>
+		<mat-form-field>
+			<mat-label>Lastname</mat-label>
+			<input matInput [(ngModel)]="data.lastLame">
+		</mat-form-field>
+	</div>
 </div>
 <div mat-dialog-actions>
 	<button mat-button (click)="onNoClick()">No Thanks</button>
-	<button mat-button (click)="confimClick()" cdkFocusInitial>Yes</button>
+	<button mat-flat-button color="warn" mat-button (click)="confimClick()" [mat-dialog-close]="true" cdkFocusInitial>
+		Yes
+	</button>
 </div>
 

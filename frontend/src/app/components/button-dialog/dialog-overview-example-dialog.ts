@@ -7,7 +7,6 @@ import {FavoritesService} from "../../services/favorites.service";
 	templateUrl: 'dialog-overview-example-dialog.html',
 })
 export class DialogOverviewExampleDialog {
-
 	constructor(
 		public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
 		@Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -16,16 +15,17 @@ export class DialogOverviewExampleDialog {
 	}
 
 	onNoClick(): void {
-
 		this.dialogRef.close();
 	}
 
 	confimClick() {
-		this.favoritesService.sendUpdate(`Confirmed`);
+		this.favoritesService.sendUpdate(`Confirmed,${this.data.firstName},${this.data.lastLame}`);
 	}
 
 }
 
 export interface DialogData {
-	calledEvent: string;
+	calledEvent: string,
+	firstName?: string,
+	lastLame?: string
 }
