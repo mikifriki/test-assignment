@@ -6,15 +6,22 @@ import {Observable, Subject} from "rxjs";
 })
 export class FavoritesService {
 	private updateStorage = new Subject<string>();
+	private updateState = new Subject<string>();
 	updateStorageObs = <Observable<string>>this.updateStorage;
+	updateStateObs = <Observable<string>>this.updateState;
 
 	addStorage(string) {
 		// @ts-ignore
 		localStorage.setItem(JSON.stringify(`${string.title}, ${string.author}`), JSON.stringify(string.id));
 	}
 
+	sendUpdateStorage(string) {
+		this.updateState.next(string);
+	}
+
 	sendUpdate(string) {
 		this.updateStorage.next(string);
+		if (this.updateStorage.observers.length > 0) this.updateStorage.observers = [];
 	}
 
 	allStorage() {
@@ -35,5 +42,11 @@ export class FavoritesService {
 				localStorage.removeItem(key);
 			}
 		}
+	}
+
+	checkFavorites(response) {
+		let arr = response.split(",");
+
+		return arr;
 	}
 }

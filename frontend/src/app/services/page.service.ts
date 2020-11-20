@@ -6,11 +6,16 @@ import {Observable} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {RestUtil} from './rest-util';
 import {MatTableDataSource} from "@angular/material/table";
+import {BookService} from "./book.service";
 
 @Injectable({
 	providedIn: 'root'
 })
 export class PageService {
+
+	constructor(private bookService: BookService) {
+	}
+
 	//Got this idea from looking at Angular documentation, and finding that mat-paginator has event emitters.
 	handlePage(dataSource, event: any, currentBooks, page, service, paginator) {
 		if (dataSource.data.length == currentBooks.totalElements) return;
@@ -30,6 +35,7 @@ export class PageService {
 
 	removeSelected(selected, dataSource, service, paginator) {
 		selected.forEach(book => {
+			if (book.status !== "AVAILABLE" && service == this.bookService) return;
 			let elementPos = dataSource.data.map((x) => {
 				return x.id;
 			}).indexOf(book.id);
@@ -41,4 +47,19 @@ export class PageService {
 		});
 	}
 
+	getPropertyByPath(obj: Object, pathString: string) {
+		return pathString.split('.').reduce((o, i) => o[i], obj);
+	}
+
+	getAllItems(getAll, dataSource, sort, paginator) {
+		console.log(getAll, getAll.toString());
+		getAll.subscribe(
+			countries => {
+				dataSource = new MatTableDataSource(countries.content);
+				dataSource.paginator = paginator;
+				dataSource.sort = sort;
+			},
+			err => console.log('HTTP Error', err)
+		);
+	}
 }

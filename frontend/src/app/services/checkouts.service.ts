@@ -33,9 +33,10 @@ export class CheckoutsService {
 		return this.http.post<void>(url, string);
 	}
 
-	deleteBook(bookId: string): Observable<void | Error> {
-		const url = this.baseUrl + '/deleteBook';
-		const params = new HttpParams().set('bookId', bookId);
+	//Todo: add return functionality
+	deleteBook(checkOutId: string): Observable<void | Error> {
+		const url = this.baseUrl + '/checkout';
+		const params = new HttpParams().set('checkOutId', checkOutId);
 		return this.http.delete<void>(url, {params});
 	}
 
