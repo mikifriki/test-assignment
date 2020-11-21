@@ -21,9 +21,9 @@ export class CheckoutsService {
 		return this.http.get<Page<Book>>(url, {params});
 	}
 
-	getCheckout(bookId: string): Observable<Book | Error> {
+	getCheckout(checkoutId: string): Observable<Book> {
 		const url = this.baseUrl + '/getCheckout';
-		const params = new HttpParams().set('bookId', bookId);
+		const params = new HttpParams().set('checkOutId', checkoutId);
 		return this.http.get<Book>(url, {params});
 	}
 
@@ -33,7 +33,7 @@ export class CheckoutsService {
 		return this.http.post<void>(url, string);
 	}
 
-	//Todo: add return functionality
+	//Done but it is not called directly inside a component
 	deleteBook(checkOutId: string): Observable<void | Error> {
 		const url = this.baseUrl + '/checkout';
 		const params = new HttpParams().set('checkOutId', checkOutId);

@@ -68,10 +68,11 @@ export class BooksTableComponent implements OnInit {
 
 	//Moved this into its own service so there would'nt be repeating code
 	handlePage(event: any) {
+		this.currentPage++;
 		this.pageService.handlePage(
 			this.dataSource, event,
-			this.currentBooks, this.currentPage,
-			this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50}),
+			this.currentBooks,
+			this.bookService.getBooks({pageIndex: this.currentPage, pageSize: 50}),
 			this.paginator
 		);
 	}

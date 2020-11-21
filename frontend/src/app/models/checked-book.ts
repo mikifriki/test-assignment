@@ -4,7 +4,7 @@ export interface CheckedBook<Book> {
 	id: string,
 	borrowerFirstName?: string,
 	borrowerLastName?: string,
-	borrowedBook: Book,
+	borrowedBook?: Book,
 	checkedOutDate?: string,
 	dueDate?: string,
 	returnedDate?: string,
