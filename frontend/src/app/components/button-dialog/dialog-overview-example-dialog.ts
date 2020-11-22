@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FavoritesService} from "../../services/favorites.service";
 
 @Component({
@@ -18,7 +18,7 @@ export class DialogOverviewExampleDialog {
 		this.dialogRef.close();
 	}
 
-	confimClick() {
+	confirmClick() {
 		this.favoritesService.sendUpdate(`Confirmed,${this.data.firstName},${this.data.lastLame}`);
 	}
 

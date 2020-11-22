@@ -15,7 +15,7 @@
 </div>
 <div mat-dialog-actions>
 	<button mat-button (click)="onNoClick()">No Thanks</button>
-	<button mat-flat-button color="warn" mat-button (click)="confimClick()" [mat-dialog-close]="true" cdkFocusInitial>
+	<button (click)="confirmClick()" [mat-dialog-close]="true" cdkFocusInitial color="warn" mat-button mat-flat-button>
 		Yes
 	</button>
 </div>
