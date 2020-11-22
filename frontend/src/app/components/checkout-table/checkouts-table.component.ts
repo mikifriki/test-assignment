@@ -29,13 +29,11 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 export class CheckoutsTableComponent implements OnInit {
 	displayedColumns: string[] = ['select', 'title', 'dueDate', 'genre', 'author', 'status'];
 	checkedBooks: Page<Book>;
-	dataSource: MatTableDataSource<Book>;
-	dataSource2: MatTableDataSource<CheckedBook<Book>>;
-	dataSource3: MatTableDataSource<Book>;
-	isDisabled: boolean;
-	currentPage: number;
+	dataSource: MatTableDataSource<CheckedBook>;
+	isDisabled;
+	currentPage;
 	selection = new SelectionModel<Book>(true, []);
-	expandedBook: MatTableDataSource<Book> | null;
+	expandedBook: Book;
 
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
@@ -53,55 +51,57 @@ export class CheckoutsTableComponent implements OnInit {
 			books => {
 				this.checkedBooks = books;
 				this.dataSource = new MatTableDataSource(books.content);
-				this.dataSource2 = new MatTableDataSource(books.content);
-				this.dataSource3 = new MatTableDataSource<Book>();
-				this.dataSource2.data.forEach(book => {
-					this.dataSource3.data.push(book.borrowedBook)
-				})
-				console.log(this.dataSource3.data.forEach(data => console.log(data)));
 				this.dataSource.paginator = this.paginator;
 				this.dataSource.sort = this.sort;
 				//This is written with heavy help from stackoverflow. It allows sorting of nested objects
 				this.dataSource.sortingDataAccessor = (data, sortHeaderId: string) => {
 					return this.pageService.getPropertyByPath(data.borrowedBook, sortHeaderId);
 				};
+
+				this.dataSource.filterPredicate = (data: CheckedBook, filter) => {
+					const dataStr = JSON.stringify(data).toLowerCase();
+					return dataStr.indexOf(filter) != -1;
+				}
 			},
 			err => console.log('HTTP Error', err)
 		);
-		this.expandedBook = this.dataSource;
+
 	}
 
-	expandedElement(element) {
-		console.log(this.dataSource.data[0]);
-		let test = this.dataSource.data.findIndex(book =>  book.id === element.id);
-		this.checkoutsService.getCheckout(element.id).subscribe(  checkout => {
-			this.dataSource.data[test] = checkout;
+	expandedElement(tableBook) {
+		this.checkoutsService.getCheckout(tableBook.id).subscribe(checkout => {
+			this.dataSource.data[this.dataSource.data.findIndex(book => book.id === tableBook.id)] = checkout;
 		});
-		this.expandedBook = this.expandedBook === element ? null : element;
+		this.expandedBook = this.expandedBook === tableBook ? null : tableBook;
 	}
 
 	filterInput(event: Event) {
-		this.utilService.filterInput(event, this.dataSource)
+		this.utilService.filterInput(event, this.dataSource);
 	}
 
 	onClick() {
-		this.pageService.getAllItems(
-			this.checkoutsService.getCheckouts({pageSize: this.checkedBooks.totalElements}),
-			this.dataSource, this.sort,
-			this.paginator
+		this.checkoutsService.getCheckouts({pageSize: this.checkedBooks.totalElements}).subscribe(
+			books => {
+				this.dataSource = new MatTableDataSource(books.content);
+				this.dataSource.paginator = this.paginator;
+				this.dataSource.sort = this.sort;
+			},
+			err => console.log('HTTP Error', err)
 		);
 		this.isDisabled = true;
 	}
 
 	//Moved this into its own service so there would'nt be repeating code
 	handlePage(event: any) {
+		if (this.isDisabled == true) return;
 		this.currentPage++;
 		this.pageService.handlePage(
 			this.dataSource, event,
 			this.checkedBooks,
 			this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50}),
 			this.paginator
-		)
+		);
+
 	}
 
 	isAllSelected() {
@@ -113,7 +113,7 @@ export class CheckoutsTableComponent implements OnInit {
 	}
 
 	removeSelectedRows() {
-		return this.selectionService.removeSelectedRows(
+		return this.selectionService.returnBook(
 			this.selection, this.dataSource,
 			this.paginator, this.checkoutsService,
 			"Return the book?"

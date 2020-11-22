@@ -8,6 +8,9 @@
 		<button mat-flat-button (click)="onClick()" disabled="{{isDisabled}}"> Get all books</button>
 		<!-- Checkbox Column -->
 		<table mat-table [dataSource]="dataSource" multiTemplateDataRows matSort class="mat-elevation-z8">
+			<div *ngIf="this.dataSource == undefined">
+				<mat-spinner></mat-spinner>
+			</div>
 			<ng-container matColumnDef="select">
 				<th mat-header-cell *matHeaderCellDef>
 					<mat-checkbox (change)="$event ? masterToggle() : null"
@@ -49,24 +52,26 @@
 					<div class="example-element-detail"
 						 [@detailExpand]="book == expandedBook ? 'expanded' : 'collapsed'">
 						<mat-list>
-							<mat-list-item> Borrower: {{book.title}}</mat-list-item>
+							<mat-list-item>
+								Borrower: {{ book.borrowerFirstName}} {{book.borrowerLastName}}</mat-list-item>
+							<mat-list-item> CheckedOut: {{ book.checkedOutDate}}</mat-list-item>
+							<mat-list-item> Due Date: {{book.dueDate}}</mat-list-item>
 						</mat-list>
-						<div class="example-element-description">
-							{{book.borrowedBook.title}}
-							<span class="example-element-description-attribution"> -- Wikipedia </span>
-						</div>
+						<mat-list>
+							<mat-list-item *ngIf="this.utilService.isBookLate(book.dueDate) == false" class="mat-warn">
+								This book is late!
+							</mat-list-item>
+						</mat-list>
 					</div>
 				</td>
 			</ng-container>
 			<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-			<!--<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>-->
-			<tr mat-row *matRowDef="let element; columns: displayedColumns;"
+			<tr (click)="expandedElement(book)" *matRowDef="let book; columns: displayedColumns;"
 				class="example-element-row"
-				[class.example-expanded-row]="(expandedBook === element)"
-				(click)="expandedElement(element)">
+				[class.example-expanded-row]="(expandedBook === book)"
+				mat-row>
 			</tr>
 			<tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-
 			<tr class="mat-row" *matNoDataRow>
 				<td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
 			</tr>
