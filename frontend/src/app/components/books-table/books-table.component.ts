@@ -10,13 +10,21 @@ import {CheckoutsService} from "../../services/checkouts.service";
 import {PageService} from "../../services/page.service";
 import {UtilService} from "../../services/util.service";
 import {SelectionService} from "../../services/selection.service";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 
 @Component({
 	selector: 'app-books-list',
 	templateUrl: './books-table.component.html',
 	styleUrls: ['./books-table.component.scss'],
-	providers: [SelectionService]
+	providers: [SelectionService],
+	animations: [
+		trigger('detailExpand', [
+			state('collapsed', style({height: '0px', minHeight: '0'})),
+			state('expanded', style({height: '*'})),
+			transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+		]),
+	],
 })
 
 export class BooksTableComponent implements OnInit {
@@ -26,6 +34,7 @@ export class BooksTableComponent implements OnInit {
 	isDisabled: boolean;
 	currentPage: number;
 	selection = new SelectionModel<Book>(true, []);
+	expandedBook: Book;
 
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
@@ -58,16 +67,20 @@ export class BooksTableComponent implements OnInit {
 	}
 
 	onClick() {
-		this.pageService.getAllItems(
-			this.bookService.getBooks({pageSize: this.currentBooks.totalElements}),
-			this.dataSource, this.sort,
-			this.paginator
+		this.bookService.getBooks({pageSize: this.currentBooks.totalElements}).subscribe(
+			books => {
+				this.dataSource = new MatTableDataSource(books.content);
+				this.dataSource.paginator = this.paginator;
+				this.dataSource.sort = this.sort;
+			},
+			err => console.log('HTTP Error', err)
 		);
 		this.isDisabled = true;
 	}
 
 	//Moved this into its own service so there would'nt be repeating code
 	handlePage(event: any) {
+		if (this.isDisabled == true) return;
 		this.currentPage++;
 		this.pageService.handlePage(
 			this.dataSource, event,
@@ -76,6 +89,18 @@ export class BooksTableComponent implements OnInit {
 			this.paginator
 		);
 	}
+
+	expandedElement(tableBook) {
+		this.bookService.getBooks(tableBook.id).subscribe(checkout => {
+			checkout.content.forEach(books => {
+				if (books.id == this.dataSource.data[this.dataSource.data.findIndex(book => book.id === tableBook.id)].id) {
+					this.dataSource.data[this.dataSource.data.findIndex(book => book.id === tableBook.id)] = books
+				}
+			});
+		});
+		this.expandedBook = this.expandedBook === tableBook ? null : tableBook;
+	}
+
 
 	Checkout() {
 		this.selectionService.checkout(this.selection);
