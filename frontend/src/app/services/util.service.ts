@@ -13,14 +13,14 @@ import * as moment from 'moment'
 })
 export class UtilService {
 
-	checkedBook: CheckedBook<Book>;
+	checkedBook: CheckedBook;
 	dialogRef: MatDialogRef<DialogOverviewExampleDialog>;
 
 	constructor(
 		private dialog: MatDialog,
 		private favoritesService: FavoritesService
 	) {
-		this.checkedBook = <CheckedBook<Book>>{};
+		this.checkedBook = <CheckedBook>{};
 	}
 
 	//Got this idea from looking at Angular documentation, and finding that mat-paginator has event emitters.
@@ -32,15 +32,32 @@ export class UtilService {
 		this.dialogRef.afterClosed().subscribe();
 	}
 
+	generateDueDate() {
+		let date = moment();
+		return date.add(1, 'months').format('YYYY-MM-DD')
+	}
+
 	checkOutBook(responseBook: Book, eventInput: string) {
-		responseBook.status = "BORROWED";
-		responseBook.checkOutCount++;
+		let newBook: Book = {
+			id: responseBook.id,
+			name: responseBook.name,
+			title: responseBook.title,
+			author: responseBook.author,
+			genre: responseBook.genre,
+			year: responseBook.year,
+			added: responseBook.added,
+			checkOutCount: responseBook.checkOutCount++,
+			status: responseBook.status = "BORROWED",
+			dueDate: this.generateDueDate(),
+			comment: responseBook.comment
+		};
 		let dialogInput = this.favoritesService.checkFavorites(eventInput);
-		const newCheckedBook: CheckedBook<Book> = {
+		const newCheckedBook: CheckedBook = {
 			id: uuidv4(),
 			borrowerFirstName: dialogInput[1],
 			borrowerLastName: dialogInput[2],
-			borrowedBook: responseBook
+			borrowedBook: newBook,
+			dueDate: this.generateDueDate()
 		};
 		return newCheckedBook;
 	}
@@ -51,5 +68,10 @@ export class UtilService {
 		if (dataSource.paginator) {
 			dataSource.paginator.firstPage();
 		}
+	}
+
+	isBookLate(dueDate: string) {
+		if (dueDate === null || dueDate === undefined) return;
+		return new Date(dueDate) > new Date();
 	}
 }
