@@ -6,7 +6,6 @@ import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaterialModule} from './material/material.module';
 import {BooksTableComponent} from './components/books-table/books-table.component';
-import {BookDetailComponent} from './components/book-detail/book-detail.component';
 import {CheckoutsTableComponent} from './components/checkout-table/checkouts-table.component';
 import {ParentTableContainer} from './components/table-container/parent-table-container';
 import {HttpClientModule} from '@angular/common/http';
@@ -19,7 +18,6 @@ import {DialogOverviewExampleDialog} from "./components/button-dialog/dialog-ove
 	declarations: [
 		AppComponent,
 		BooksTableComponent,
-		BookDetailComponent,
 		CheckoutsTableComponent,
 		ParentTableContainer,
 		FavoriteBookDisplay,
