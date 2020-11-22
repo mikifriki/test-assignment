@@ -33,7 +33,7 @@ export class CheckoutsService {
 		return this.http.post<void>(url, string);
 	}
 
-	//Done but it is not called directly inside a component
+	//Done
 	deleteBook(checkOutId: string): Observable<void | Error> {
 		const url = this.baseUrl + '/checkout';
 		const params = new HttpParams().set('checkOutId', checkOutId);

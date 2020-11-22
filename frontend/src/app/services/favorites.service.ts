@@ -5,33 +5,29 @@ import {Observable, Subject} from "rxjs";
 	providedIn: 'root'
 })
 export class FavoritesService {
-	private updateStorage = new Subject<string>();
-	private updateState = new Subject<string>();
-	updateStorageObs = <Observable<string>>this.updateStorage;
-	updateStateObs = <Observable<string>>this.updateState;
+	//Because I cant use *ngif on objects I have to create an array of localstorage first to use it.
+	favoriteItems = [];
+	private sendEvent = new Subject<string>();
+	//This array is only created for passing it onto favorite book component.
+	sendEventObs = <Observable<string>>this.sendEvent;
 
 	addStorage(string) {
-		// @ts-ignore
 		localStorage.setItem(JSON.stringify(`${string.title}, ${string.author}`), JSON.stringify(string.id));
 	}
 
-	sendUpdateStorage(string) {
-		this.updateState.next(string);
-	}
-
 	sendUpdate(string) {
-		this.updateStorage.next(string);
-		if (this.updateStorage.observers.length > 0) this.updateStorage.observers = [];
+		this.sendEvent.next(string);
+		if (this.sendEvent.observers.length > 0) this.sendEvent.observers = [];
 	}
 
-	allStorage() {
-		let values = [];
+	getStorage() {
+		this.favoriteItems.length = 0;
 		for (let i = 0; i < localStorage.length; i++) {
-			values.push(
+			this.favoriteItems.push(
 				localStorage.key(i).replace(/['"]+/g, '').split(',')
 			)
 		}
-		return values;
+		return this.favoriteItems;
 	}
 
 	removeItem(string) {
@@ -44,9 +40,13 @@ export class FavoritesService {
 		}
 	}
 
+	clearFavorites() {
+		localStorage.clear();
+		this.favoriteItems.length = 0;
+	}
+
 	checkFavorites(response) {
 		let arr = response.split(",");
-
 		return arr;
 	}
 }
