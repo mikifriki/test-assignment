@@ -5,10 +5,8 @@ import {CheckedBook} from "../models/checked-book";
 import {Book} from "../models/book";
 import {v4 as uuidv4} from "uuid";
 import {FavoritesService} from "./favorites.service";
-import {Observable} from "rxjs";
-import {DataSource} from "@angular/cdk/collections";
 import {MatTableDataSource} from "@angular/material/table";
-
+import * as moment from 'moment'
 
 @Injectable({
 	providedIn: 'root'
@@ -47,7 +45,7 @@ export class UtilService {
 		return newCheckedBook;
 	}
 
-	filterInput(event: Event, dataSource: MatTableDataSource<Book>) {
+	filterInput(event: Event, dataSource: MatTableDataSource<any>) {
 		const filterValue = (event.target as HTMLInputElement).value;
 		dataSource.filter = filterValue.trim().toLowerCase();
 		if (dataSource.paginator) {
