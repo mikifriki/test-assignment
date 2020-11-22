@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {MatTableDataSource} from "@angular/material/table";
 import {BookService} from "./book.service";
 
 @Injectable({
@@ -42,17 +41,5 @@ export class PageService {
 
 	getPropertyByPath(obj: Object, pathString: string) {
 		return pathString.split('.').reduce((o, i) => o[i], obj);
-	}
-
-	getAllItems(getAll, dataSource, sort, paginator) {
-		console.log(getAll, getAll.toString());
-		getAll.subscribe(
-			countries => {
-				dataSource = new MatTableDataSource(countries.content);
-				dataSource.paginator = paginator;
-				dataSource.sort = sort;
-			},
-			err => console.log('HTTP Error', err)
-		);
 	}
 }

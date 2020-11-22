@@ -1,4 +1,4 @@
-import {Inject, Injectable, Optional} from '@angular/core';
+import {Injectable} from '@angular/core';
 
 import {Book} from "../models/book";
 
@@ -26,21 +26,21 @@ export class SelectionService {
 	}
 
 
-	isAllSelected(selection: SelectionModel<Book>, dataSource: MatTableDataSource<Book>) {
+	isAllSelected(selection: SelectionModel<Book>, dataSource: MatTableDataSource<any>) {
 		const numSelected = selection.selected.length;
 		const numRows = dataSource.data.length;
 		return numSelected === numRows;
 	}
 
-	masterToggle(selection: SelectionModel<Book>, dataSource: MatTableDataSource<Book>) {
+	masterToggle(selection: SelectionModel<Book>, dataSource: MatTableDataSource<any>) {
 		this.isAllSelected(selection, dataSource) ?
 			selection.clear() :
 			dataSource.data.forEach(row => selection.select(row));
 	}
 
-	removeSelectedRows(selection: SelectionModel<Book>, dataSource: MatTableDataSource<Book>, paginator: MatPaginator, service, string: String = "Delete") {
+	removeSelectedRows(selection: SelectionModel<Book>, dataSource: MatTableDataSource<any>, paginator: MatPaginator, service, string: String = "Delete") {
 		this.utilService.openDialog(string);
-		this.favoritesService.updateStorageObs.subscribe((response) => {
+		this.favoritesService.sendEventObs.subscribe((response) => {
 			if (response) {
 				this.pageService.removeSelected(
 					selection.selected, dataSource,
@@ -51,13 +51,18 @@ export class SelectionService {
 		});
 	}
 
-	checkout(selection: SelectionModel<Book>) {
+	checkout(selection: SelectionModel<any>) {
 		this.utilService.openDialog("Checkout");
-		this.favoritesService.updateStorageObs.subscribe((response) => {
+		this.favoritesService.sendEventObs.subscribe((response) => {
 			if (response) {
 				selection.selected.forEach(book => {
 					if (book.status == "AVAILABLE") {
-						this.checkoutsService.checkout(this.utilService.checkOutBook(book, response)).subscribe();
+						this.checkoutsService.checkout(this.utilService.checkOutBook(book, response)).subscribe(
+							error => {
+								console.log(error);
+								return;
+							}
+						);
 						book.id.toString().trim();
 						this.bookService.saveBook(book).subscribe();
 					}
@@ -66,11 +71,20 @@ export class SelectionService {
 		});
 	}
 
-	addToFavorites(selection: SelectionModel<Book>) {
+	addToFavorites(selection: SelectionModel<any>) {
 		selection.selected.forEach(book => {
-			this.favoritesService.sendUpdate(`${book.id}`);
 			this.favoritesService.addStorage(book);
-		})
+		});
+
+		this.favoritesService.getStorage()
+	}
+
+	returnBook(selection: SelectionModel<any>, dataSource: MatTableDataSource<any>, paginator: MatPaginator, service, string: String = "Delete") {
+		this.removeSelectedRows(selection, dataSource, paginator, service, string);
+		selection.selected.forEach(book => {
+			book.borrowedBook.status = "AVAILABLE";
+			this.bookService.saveBook(book.borrowedBook).subscribe()
+		});
 	}
 
 }
