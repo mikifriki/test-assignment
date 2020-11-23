@@ -81,7 +81,6 @@ export class UtilService {
 
 	//This is used to return a array of with ,
 	arrayFromComma(response) {
-		let arr = response.split(",");
-		return arr;
+		return response.split(",");
 	}
 }

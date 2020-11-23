@@ -86,6 +86,7 @@ export class SelectionService {
 		});
 	}
 
+	//This gets the selection and adds each book into localstorage.
 	addToFavorites(selection: SelectionModel<any>) {
 		selection.selected.forEach(book => {
 			this.favoritesService.addStorage(book);
@@ -94,12 +95,13 @@ export class SelectionService {
 		this.favoritesService.getStorage()
 	}
 
+	//This sends api request to change the returned books back to available.
+	//It also uses the same "remove selected rows" function to remove the returned books.
 	returnBook(selection: SelectionModel<any>, dataSource: MatTableDataSource<any>, paginator: MatPaginator, service, string: String = "Delete") {
-		this.removeSelectedRows(selection, dataSource, paginator, service, string);
 		selection.selected.forEach(book => {
-			book.borrowedBook.status = "AVAILABLE";
 			this.bookService.saveBook(book.borrowedBook).subscribe()
 		});
+		this.removeSelectedRows(selection, dataSource, paginator, service, string);
 	}
 
 }
