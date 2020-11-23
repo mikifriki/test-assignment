@@ -26,21 +26,31 @@ export class SelectionService {
 	}
 
 
+	//This gets called from both the tables. This returns true if all the rows are selected.
+	//This is only called on click on the master checkbox.
 	isAllSelected(selection: SelectionModel<Book>, dataSource: MatTableDataSource<any>) {
 		const numSelected = selection.selected.length;
 		const numRows = dataSource.data.length;
 		return numSelected === numRows;
 	}
 
+	//This gets called from each of the tables master checkbox.
+	//If any of them are selected the masterToggle will deselect them
+	//If the none of them are toggled then they all get selected.
 	masterToggle(selection: SelectionModel<Book>, dataSource: MatTableDataSource<any>) {
 		this.isAllSelected(selection, dataSource) ?
 			selection.clear() :
 			dataSource.data.forEach(row => selection.select(row));
 	}
 
+	//Only BORROWED books can be deleted.
+	//This gets called from books-table.
+	//It opens a dialog to check if you are sure you want to delete the selected books.
+	//This uses the eventObserver in Favorites service.
+	//The data sent to remove selected is all the selected books
 	removeSelectedRows(selection: SelectionModel<Book>, dataSource: MatTableDataSource<any>, paginator: MatPaginator, service, string: String = "Delete") {
 		this.utilService.openDialog(string);
-		this.favoritesService.sendEventObs.subscribe((response) => {
+		this.favoritesService.sendEventObs.subscribe((response => {
 			if (response) {
 				this.pageService.removeSelected(
 					selection.selected, dataSource,
@@ -48,9 +58,14 @@ export class SelectionService {
 				);
 				selection.clear();
 			}
-		});
+		}));
 	}
 
+
+	//This gets the selected books and sends and observedEvent.
+	//for each selected book it creates a new CheckedBook object which exists in util.service
+	//Then it sends the object for each of the objects to the api.
+	//This took a few tries to get right because I kept going through different iterations on how to checkout the book in the best way.
 	checkout(selection: SelectionModel<any>) {
 		this.utilService.openDialog("Checkout");
 		this.favoritesService.sendEventObs.subscribe((response) => {

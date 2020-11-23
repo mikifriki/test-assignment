@@ -10,7 +10,6 @@ import {CheckoutsTableComponent} from './components/checkout-table/checkouts-tab
 import {ParentTableContainer} from './components/table-container/parent-table-container';
 import {HttpClientModule} from '@angular/common/http';
 import {FavoriteBookDisplay} from "./components/favorite-books/favorite-book.display";
-import {CreateBookComponent} from "./components/create-book/create-book.component";
 import {FormsModule} from "@angular/forms";
 import {DialogOverviewExampleDialog} from "./components/button-dialog/dialog-overview-example-dialog";
 
@@ -21,7 +20,6 @@ import {DialogOverviewExampleDialog} from "./components/button-dialog/dialog-ove
 		CheckoutsTableComponent,
 		ParentTableContainer,
 		FavoriteBookDisplay,
-		CreateBookComponent,
 		DialogOverviewExampleDialog
 	],
 	imports: [

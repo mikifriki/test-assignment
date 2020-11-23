@@ -6,6 +6,7 @@ import {FavoritesService} from "../../services/favorites.service";
 	selector: 'dialog-overview-example-dialog',
 	templateUrl: 'dialog-overview-example-dialog.html',
 })
+//This component gets used in The Return Book, Delete Book and the Checkout components.
 export class DialogOverviewExampleDialog {
 	constructor(
 		public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
@@ -18,6 +19,7 @@ export class DialogOverviewExampleDialog {
 		this.dialogRef.close();
 	}
 
+	//This sends the input data from the modal window to the observer for it to be used in the checkout proccess.
 	confirmClick() {
 		this.favoritesService.sendUpdate(`Confirmed,${this.data.firstName},${this.data.lastLame}`);
 	}

@@ -1,6 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {CheckoutsService} from '../../services/checkouts.service';
-import {Page} from '../../models/page';
 import {CheckedBook} from '../../models/checked-book'
 import {Book} from '../../models/book';
 import {MatTableDataSource} from "@angular/material/table";
@@ -17,6 +16,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 	templateUrl: './checkouts-table.component.html',
 	styleUrls: ['./checkouts-table.component.scss'],
 	providers: [SelectionService],
+	//this animations is from the expansion table angular material example.
 	animations: [
 		trigger('detailExpand', [
 			state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -28,12 +28,12 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 
 export class CheckoutsTableComponent implements OnInit {
 	displayedColumns: string[] = ['select', 'title', 'dueDate', 'genre', 'author', 'status'];
-	checkedBooks: Page<Book>;
 	dataSource: MatTableDataSource<CheckedBook>;
-	isDisabled;
-	currentPage;
+	isDisabled: boolean;
+	currentPage: number;
 	selection = new SelectionModel<Book>(true, []);
 	expandedBook: Book;
+	totalPages: number;
 
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
@@ -47,10 +47,11 @@ export class CheckoutsTableComponent implements OnInit {
 	ngOnInit(): void {
 		this.isDisabled = false;
 		this.currentPage = 0;
+
 		this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50}).subscribe(
 			books => {
-				this.checkedBooks = books;
 				this.dataSource = new MatTableDataSource(books.content);
+				this.totalPages = books.totalElements;
 				this.dataSource.paginator = this.paginator;
 				this.dataSource.sort = this.sort;
 				//This is written with heavy help from stackoverflow. It allows sorting of nested objects
@@ -79,8 +80,10 @@ export class CheckoutsTableComponent implements OnInit {
 		this.utilService.filterInput(event, this.dataSource);
 	}
 
+	//This button is to get all the books at once.
+	//It disables itself once it has been clicked.
 	onClick() {
-		this.checkoutsService.getCheckouts({pageSize: this.checkedBooks.totalElements}).subscribe(
+		this.checkoutsService.getCheckouts({pageSize: this.totalPages}).subscribe(
 			books => {
 				this.dataSource = new MatTableDataSource(books.content);
 				this.dataSource.paginator = this.paginator;
@@ -92,26 +95,35 @@ export class CheckoutsTableComponent implements OnInit {
 	}
 
 	//Moved this into its own service so there would'nt be repeating code
+	//This sends this tables datasource, total pages there are supposed to be and the get next books.
+	//The reason the get books service is called here is because I want to use the general functionality in another table.
+	//This was fun to code because I got to use a nicely paginated API.
+	//The Datasource gets updated and kept up to date so there wont be any useless calls for the same data again.
 	handlePage(event: any) {
 		if (this.isDisabled == true) return;
 		this.currentPage++;
 		this.pageService.handlePage(
 			this.dataSource, event,
-			this.checkedBooks,
+			this.totalPages,
 			this.checkoutsService.getCheckouts({pageIndex: this.currentPage, pageSize: 50}),
 			this.paginator
 		);
 
 	}
 
+	//This checks if all the current items of the datasource are selected.
+	//This again is in a service because I reuse the same functionality in the other table
 	isAllSelected() {
 		return this.selectionService.isAllSelected(this.selection, this.dataSource)
 	}
 
+	//This adds select all and deselect all to the top most checkbox of the item.
 	masterToggle() {
 		return this.selectionService.masterToggle(this.selection, this.dataSource);
 	}
 
+	//This gets all the selected items and opens the dialog to check if you are sure if you want to return the books.
+	//There is more documented in the service itself.
 	removeSelectedRows() {
 		return this.selectionService.returnBook(
 			this.selection, this.dataSource,

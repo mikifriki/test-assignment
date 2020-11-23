@@ -3,7 +3,7 @@
 		<mat-card-title>Books</mat-card-title>
 		<mat-form-field>
 			<mat-label>Filter</mat-label>
-			<input matInput (keydown)="filterInput($event)" placeholder="Fred" #input>
+			<input matInput (keydown)="filterInput($event)" placeholder="Edna" #input>
 		</mat-form-field>
 		<button mat-flat-button (click)="onClick()" disabled="{{isDisabled}}"> Get all books</button>
 		<table [dataSource]="dataSource" class="mat-elevation-z8" mat-table matSort multiTemplateDataRows>
@@ -50,17 +50,17 @@
 				<td *matCellDef="let book" [attr.colspan]="displayedColumns.length" mat-cell>
 					<div [@detailExpand]="book == expandedBook ? 'expanded' : 'collapsed'"
 						 class="example-element-detail">
-						<mat-list>
-							<mat-list-item> Title: {{ book.title}}</mat-list-item>
-							<mat-list-item> Author: {{ book.author}}</mat-list-item>
-							<mat-list-item> Genre: {{book.genre}}</mat-list-item>
-							<mat-list-item> year: {{book.year}}</mat-list-item>
-						</mat-list>
-						<mat-list>
-							<mat-list-item *ngIf="this.utilService.isBookLate(book.dueDate) == false" class="mat-warn">
-								This book is late!
-							</mat-list-item>
-						</mat-list>
+						<mat-card class="example-card">
+							<mat-card-title *ngIf="this.utilService.isBookLate(book.dueDate) == false">
+								This book is overdue
+							</mat-card-title>
+							<mat-list>
+								<mat-list-item> Title: {{ book.title}}</mat-list-item>
+								<mat-list-item> Author: {{ book.author}}</mat-list-item>
+								<mat-list-item> Genre: {{book.genre}}</mat-list-item>
+								<mat-list-item> year: {{book.year}}</mat-list-item>
+							</mat-list>
+						</mat-card>
 					</div>
 				</td>
 			</ng-container>
@@ -84,6 +84,7 @@
 		<button mat-raised-button (click)="Checkout()">Checkout</button>
 		<mat-paginator [pageSizeOptions]="[5, 10, 25, 50]" (page)="handlePage($event)"></mat-paginator>
 	</mat-card>
+
 </div>
 
 
