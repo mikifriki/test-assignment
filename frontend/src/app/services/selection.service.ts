@@ -94,15 +94,4 @@ export class SelectionService {
 
 		this.favoritesService.getStorage()
 	}
-
-	//This sends api request to change the returned books back to available.
-	//It also uses the same "remove selected rows" function to remove the returned books.
-	returnBook(selection: SelectionModel<any>, dataSource: MatTableDataSource<any>, paginator: MatPaginator, service, string: String = "Delete") {
-		selection.selected.forEach(book => {
-			book.borrowedBook.status = "AVAILABLE";
-			this.bookService.changeBook(book.borrowedBook.id, book.borrowedBook).subscribe()
-		});
-		this.removeSelectedRows(selection, dataSource, paginator, service, string);
-	}
-
 }

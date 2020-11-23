@@ -10,6 +10,7 @@ import {UtilService} from "../../services/util.service";
 import {SelectionService} from "../../services/selection.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {BookService} from "../../services/book.service";
 
 @Component({
 	selector: 'app-checkouts-list',
@@ -40,7 +41,8 @@ export class CheckoutsTableComponent implements OnInit {
 
 	constructor(
 		private selectionService: SelectionService, private utilService: UtilService,
-		private checkoutsService: CheckoutsService, private  pageService: PageService
+		private checkoutsService: CheckoutsService, private  pageService: PageService,
+		private bookService: BookService
 	) {
 	}
 
@@ -124,11 +126,13 @@ export class CheckoutsTableComponent implements OnInit {
 
 	//This gets all the selected items and opens the dialog to check if you are sure if you want to return the books.
 	//There is more documented in the service itself.
+	//This sends api request to change the returned books back to available.
+	//It also uses the same "remove selected rows" function to remove the returned books.
 	removeSelectedRows() {
-		return this.selectionService.returnBook(
-			this.selection, this.dataSource,
-			this.paginator, this.checkoutsService,
-			"Return the book?"
-		);
+		this.selectionService.removeSelectedRows(this.selection, this.dataSource, this.paginator, this.checkoutsService, "Return the book?");
+		this.selection.selected.forEach(book => {
+			book.status = "AVAILABLE";
+			this.bookService.changeBook(book.id, book).subscribe()
+		});
 	}
 }
