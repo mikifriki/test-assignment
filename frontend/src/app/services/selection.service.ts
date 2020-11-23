@@ -100,7 +100,7 @@ export class SelectionService {
 	returnBook(selection: SelectionModel<any>, dataSource: MatTableDataSource<any>, paginator: MatPaginator, service, string: String = "Delete") {
 		selection.selected.forEach(book => {
 			book.borrowedBook.status = "AVAILABLE";
-			this.bookService.saveBook(book.borrowedBook).subscribe()
+			this.bookService.changeBook(book.borrowedBook.id, book.borrowedBook).subscribe()
 		});
 		this.removeSelectedRows(selection, dataSource, paginator, service, string);
 	}

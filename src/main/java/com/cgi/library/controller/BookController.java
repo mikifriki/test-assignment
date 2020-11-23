@@ -1,5 +1,6 @@
 package com.cgi.library.controller;
 
+import com.cgi.library.entity.Book;
 import com.cgi.library.model.BookDTO;
 import com.cgi.library.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/book")
 public class BookController {
-
     @Autowired
     private BookService bookService;
 
@@ -30,6 +30,11 @@ public class BookController {
     @PostMapping(value = "saveBook")
     public ResponseEntity<String> saveBook(@RequestBody BookDTO book) {
         return ResponseEntity.ok(String.valueOf(bookService.saveBook(book)));
+    }
+
+    @PutMapping(value = "changeBook")
+    public ResponseEntity<Book> changeBook(@RequestParam(value = "bookId") UUID bookId, @RequestBody Book bookDetails) {
+        return ResponseEntity.ok(bookService.changeBook(bookDetails, bookId));
     }
 
     @DeleteMapping(value = "deleteBook")

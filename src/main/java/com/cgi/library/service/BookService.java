@@ -36,4 +36,13 @@ public class BookService {
     public void deleteBook(UUID bookId) {
         bookRepository.deleteById(bookId);
     }
+
+    public Book changeBook(Book bookDTO, UUID id) {
+        bookRepository.findById(id)
+                .map(g ->
+                    bookRepository.save(bookDTO)
+                )
+                .orElse(bookDTO);
+        return bookDTO;
+    }
 }
