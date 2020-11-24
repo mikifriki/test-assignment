@@ -47,4 +47,8 @@ export class FavoritesService {
 			}
 		}
 	}
+	clearFavorites() {
+		localStorage.clear();
+		this.favoriteItems.length = 0;
+	}
 }

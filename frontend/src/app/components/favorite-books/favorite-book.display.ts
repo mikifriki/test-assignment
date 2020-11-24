@@ -21,4 +21,8 @@ export class FavoriteBookDisplay implements OnInit {
 		this.favoriteService.removeItem(string);
 		this.ngOnInit();
 	}
+
+	clearAllItems() {
+		this.favoriteService.clearFavorites();
+	}
 }

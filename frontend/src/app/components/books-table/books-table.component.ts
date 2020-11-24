@@ -135,4 +135,8 @@ export class BooksTableComponent implements OnInit {
 	addToFavorites() {
 		return this.selectionService.addToFavorites(this.selection);
 	}
+
+	isBookLate(string: string) {
+		return this.utilService.isBookLate(string);
+	}
 }

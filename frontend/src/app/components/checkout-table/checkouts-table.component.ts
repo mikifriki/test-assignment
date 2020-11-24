@@ -122,6 +122,10 @@ export class CheckoutsTableComponent implements OnInit {
 		return this.selectionService.masterToggle(this.selection, this.dataSource);
 	}
 
+	isBookLate(string: string) {
+		return this.utilService.isBookLate(string)
+	}
+
 	//This gets all the selected items and opens the dialog to check if you are sure if you want to return the books.
 	//There is more documented in the service itself.
 	removeSelectedRows() {

@@ -1,7 +1,7 @@
 <div *ngIf="favoriteItems.length !== 0" class="container mat-elevation-z4">
 	<mat-card [hidden]="true">
 		<mat-card-title>Favorite books</mat-card-title>
-		<button (click)="this.favoriteService.clearFavorites()" color="warn" mat-flat-button>Remove all favorites
+		<button (click)="clearAllItems()" color="warn" mat-flat-button>Remove all favorites
 		</button>
 		<mat-list>
 			<mat-list-item *ngFor="let item of favoriteItems">
