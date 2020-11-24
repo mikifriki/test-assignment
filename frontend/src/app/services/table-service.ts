@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
-import {Book} from "../models/book";
-import {FavoritesService} from "./favorites.service";
-import {SelectionModel} from "@angular/cdk/collections";
-import {MatTableDataSource} from "@angular/material/table";
-import {UtilService} from "./util.service";
-import {PageService} from "./page.service";
-import {BookService} from "./book.service";
-import {CheckoutsService} from "./checkouts.service";
+import {Book} from '../models/book';
+import {FavoritesService} from './favorites.service';
+import {SelectionModel} from '@angular/cdk/collections';
+import {MatTableDataSource} from '@angular/material/table';
+import {UtilService} from './util.service';
+import {PageService} from './page.service';
+import {BookService} from './book.service';
+import {CheckoutsService} from './checkouts.service';
 
 
 @Injectable()
@@ -33,7 +33,7 @@ export class TableService {
 			datasource: this.dataSource,
 			isDisabled: this.isDisabled,
 			selection: this.selection
-		}
+		};
 	}
 
 
