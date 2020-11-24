@@ -81,7 +81,7 @@ export class SelectionService {
 							}
 						);
 						book.id.toString().trim();
-						this.bookService.saveBook(book).subscribe();
+						this.bookService.changeBook(book.id, book).subscribe();
 					}
 				});
 			}
