@@ -128,7 +128,7 @@ export class BooksTableComponent implements OnInit {
 	}
 
 	// This gets all the selected rows and sends a delete request to the api.
-	// Only BORROWED books can be deleted.
+	// Only AVAILABLE books can be deleted.
 	removeSelectedRows() {
 		return this.selectionService.removeSelectedRows(this.selection, this.dataSource, this.paginator, this.bookService);
 	}

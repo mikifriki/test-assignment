@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable({
 	providedIn: 'root'
@@ -9,8 +9,8 @@ export class FavoritesService {
 	// This array is only created for passing it onto favorite book component.
 	favoriteItems = [];
 	// This is for the dialog component.
-	private sendEvent = new Subject<string>();
-	sendEventObs = this.sendEvent as Observable<string>;
+	private sendEvent = new BehaviorSubject<string>('');
+	sendEventObs = this.sendEvent;
 
 	// Once the called function is called the passed parameter is stringifyed and added into the local storage
 	addStorage(book) {
