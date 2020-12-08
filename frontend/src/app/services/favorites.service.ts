@@ -10,7 +10,7 @@ export class FavoritesService {
 	favoriteItems = [];
 	// This is for the dialog component.
 	private sendEvent = new BehaviorSubject<string>('');
-	sendEventObs = this.sendEvent;
+	sendEventObs = this.sendEvent.asObservable();
 
 	// Once the called function is called the passed parameter is stringifyed and added into the local storage
 	addStorage(book) {
@@ -22,9 +22,6 @@ export class FavoritesService {
 	// It resembles an event emitter sort of
 	sendUpdate(eventName: string) {
 		this.sendEvent.next(eventName);
-		if (this.sendEvent.observers.length > 0) {
-			this.sendEvent.observers = [];
-		}
 	}
 
 	// Once this is called it takes the Array declared in this service and fills it with the localstorage items.

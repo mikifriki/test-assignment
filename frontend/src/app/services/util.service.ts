@@ -41,6 +41,18 @@ export class UtilService {
 	// This also gets the input from the dialog and adds them to the borrowedBook first name and last name.
 	checkOutBook(responseBook: Book, eventInput: string) {
 		const dialogInput = this.arrayFromComma(eventInput);
+		const newCheckedBook: CheckedBook = {
+			id: uuidv4(),
+			borrowerFirstName: dialogInput[1],
+			borrowerLastName: dialogInput[2],
+			borrowedBook: this.createNewBook(responseBook),
+			dueDate: this.generateDueDate()
+		};
+		return newCheckedBook;
+	}
+
+	// CreateBook
+	createNewBook(responseBook: Book) {
 		const newBook: Book = {
 			id: responseBook.id,
 			name: responseBook.name,
@@ -54,15 +66,9 @@ export class UtilService {
 			dueDate: this.generateDueDate(),
 			comment: responseBook.comment
 		};
-		const newCheckedBook: CheckedBook = {
-			id: uuidv4(),
-			borrowerFirstName: dialogInput[1],
-			borrowerLastName: dialogInput[2],
-			borrowedBook: newBook,
-			dueDate: this.generateDueDate()
-		};
-		return newCheckedBook;
+		return newBook;
 	}
+
 
 	// Gets the input elements value from the called component uses it to return the filtered datasource for the table to use.
 	// It also resets the datasource paginator so the table pagination does not break.

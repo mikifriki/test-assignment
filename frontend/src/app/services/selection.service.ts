@@ -38,7 +38,7 @@ export class SelectionService {
 	// If any of them are selected the masterToggle will deselect them
 	// If the none of them are toggled then they all get selected.
 	masterToggle(selection: SelectionModel<Book>, dataSource: MatTableDataSource<any>) {
-		this.isAllSelected(selection, dataSource) ?
+		return this.isAllSelected(selection, dataSource) ?
 			selection.clear() :
 			dataSource.data.forEach(row => selection.select(row));
 	}
