@@ -51,7 +51,7 @@
 					<div [@detailExpand]="book == expandedBook ? 'expanded' : 'collapsed'"
 						 class="example-element-detail">
 						<mat-card class="example-card">
-							<mat-card-title *ngIf="this.utilService.isBookLate(book.dueDate) == false">
+							<mat-card-title *ngIf="isBookLate(book.dueDate) == false">
 								This book is overdue
 							</mat-card-title>
 							<mat-list>

@@ -1,5 +1,4 @@
 # Test assignment
-
 Welcome to CGI test assignment!
 This is the project template which contains Angular front-end and Spring Boot back-end
 

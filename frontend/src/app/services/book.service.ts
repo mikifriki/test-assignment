@@ -7,16 +7,14 @@ import {environment} from 'src/environments/environment';
 import {RestUtil} from './rest-util';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class BookService {
 
-  private readonly baseUrl = environment.backendUrl + '/api/book';
+	private readonly baseUrl = environment.backendUrl + '/api/book';
 
-  constructor(
-	  private http: HttpClient,
-  ) {
-  }
+	constructor(private http: HttpClient) {
+	}
 
 	getBooks(filter: Partial<PageRequest>): Observable<Page<Book>> {
 		const url = this.baseUrl + '/getBooks';
@@ -35,10 +33,10 @@ export class BookService {
 		return this.http.post<void>(url, book);
 	}
 
-	changeBook(bookId, book): Observable<void > {
+	changeBook(bookId, book): Observable<void> {
 		const url = this.baseUrl + '/changeBook';
 		const params = new HttpParams().set('bookId', bookId);
-		return this.http.put<void>(url, book,{params});
+		return this.http.put<void>(url, book, {params});
 	}
 
 	deleteBook(bookId): Observable<void | Error> {

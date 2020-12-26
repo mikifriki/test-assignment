@@ -5,6 +5,7 @@ import {Book} from '../models/book';
 import {Observable} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {RestUtil} from './rest-util';
+import {CheckedBook} from '../models/checked-book';
 
 @Injectable({
 	providedIn: 'root'
@@ -27,13 +28,13 @@ export class CheckoutsService {
 		return this.http.get<Book>(url, {params});
 	}
 
-	//Done
-	checkout(string): Observable<void | Error> {
+	// Done
+	checkout(book: CheckedBook): Observable<void | Error> {
 		const url = this.baseUrl + '/checkout';
-		return this.http.post<void>(url, string);
+		return this.http.post<void>(url, book);
 	}
 
-	//Done
+	// Done
 	deleteBook(checkOutId: string): Observable<void | Error> {
 		const url = this.baseUrl + '/checkout';
 		const params = new HttpParams().set('checkOutId', checkOutId);

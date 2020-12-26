@@ -38,11 +38,6 @@ public class BookService {
     }
 
     public Book changeBook(Book bookDTO, UUID id) {
-        bookRepository.findById(id)
-                .map(g ->
-                    bookRepository.save(bookDTO)
-                )
-                .orElse(bookDTO);
-        return bookDTO;
+        return  bookRepository.findById(id).map(g -> bookRepository.save(bookDTO)).orElse(bookDTO);
     }
 }

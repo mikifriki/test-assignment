@@ -7,7 +7,7 @@ import {FavoritesService} from '../../services/favorites.service';
 	styleUrls: ['./favorite-book.display.scss'],
 })
 
-export class FavoriteBookDisplay implements OnInit {
+export class FavoriteBookDisplayComponent implements OnInit {
 	favoriteItems;
 
 	constructor(private favoriteService: FavoritesService) {
@@ -17,8 +17,12 @@ export class FavoriteBookDisplay implements OnInit {
 		this.favoriteItems = this.favoriteService.getStorage();
 	}
 
-	removeItem(string) {
-		this.favoriteService.removeItem(string);
+	removeItem(id: string) {
+		this.favoriteService.removeItem(id);
 		this.ngOnInit();
+	}
+
+	clearAllItems() {
+		this.favoriteService.clearFavorites();
 	}
 }
